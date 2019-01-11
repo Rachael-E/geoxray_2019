@@ -3,7 +3,10 @@ package com.esri.android.geoxray
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
+import com.esri.arcgisruntime.data.FeatureTable
+import com.esri.arcgisruntime.data.ServiceFeatureTable
 import com.esri.arcgisruntime.layers.ArcGISSceneLayer
+import com.esri.arcgisruntime.layers.FeatureLayer
 import com.esri.arcgisruntime.mapping.ArcGISScene
 import com.esri.arcgisruntime.mapping.view.ARCoreMotionDataSource
 import com.esri.arcgisruntime.mapping.view.Camera
@@ -82,16 +85,22 @@ class MainActivity : AppCompatActivity() {
     fun setUpARScene() {
         // Create scene without a basemap.  Background for scene content provided by device camera.
         sceneView.setScene(ArcGISScene());
-        // Add San Diego scene layer.  This operational data will render on a video feed (eg from the device camera).
-        sceneView.getScene().getOperationalLayers().add(ArcGISSceneLayer("https://tiles.arcgis.com/tiles/Imiq6naek6ZWdour/arcgis/rest/services/San_Diego_Textured_Buildings/SceneServer/layers/0"));
+
+        val opLayers = sceneView.getScene().getOperationalLayers();
+        opLayers.add(FeatureLayer(ServiceFeatureTable(
+                "https://services1.arcgis.com/6677msI40mnLuuLr/arcgis/rest/services/GeoXRay_WFL1/FeatureServer/0")));
+        opLayers.add(FeatureLayer(ServiceFeatureTable(
+                "https://services1.arcgis.com/6677msI40mnLuuLr/arcgis/rest/services/GeoXRay_WFL1/FeatureServer/1")));
+        opLayers.add(FeatureLayer(ServiceFeatureTable(
+                "https://services1.arcgis.com/6677msI40mnLuuLr/arcgis/rest/services/GeoXRay_WFL1/FeatureServer/2")));
+
         // Enable AR for scene view.
         sceneView.setARModeEnabled(true);
+
         // Create an instance of Camera
-
-
-        val cameraSanDiego = Camera(32.707, -117.157, 60.0, 270.0, 0.0, 0.0);
+        val cameraDynamicEarth = Camera(55.952486, -3.163775, 18.0, 0.0, 0.0, 0.0);
         val fpcController = FirstPersonCameraController();
-        fpcController.setInitialPosition(cameraSanDiego);
+        fpcController.setInitialPosition(cameraDynamicEarth);
         fpcController.setTranslationFactor(500.0);
 
         val arMotionSource = ARCoreMotionDataSource(arSceneView,this);
