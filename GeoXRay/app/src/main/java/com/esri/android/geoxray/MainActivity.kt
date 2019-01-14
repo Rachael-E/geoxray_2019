@@ -1,7 +1,6 @@
 package com.esri.android.geoxray
 
 import android.Manifest
-import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
@@ -12,19 +11,16 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
-import com.esri.arcgisruntime.data.FeatureTable
 import com.esri.arcgisruntime.data.ServiceFeatureTable
-import com.esri.arcgisruntime.layers.ArcGISSceneLayer
 import com.esri.arcgisruntime.layers.FeatureLayer
 import com.esri.arcgisruntime.mapping.ArcGISScene
-import com.esri.arcgisruntime.mapping.view.ARCoreMotionDataSource
-import com.esri.arcgisruntime.mapping.view.Camera
-import com.esri.arcgisruntime.mapping.view.FirstPersonCameraController
-import com.esri.arcgisruntime.mapping.view.LayerSceneProperties
+import com.esri.arcgisruntime.mapping.view.*
 import com.google.ar.core.ArCoreApk
 import com.google.ar.core.Session
 import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException
 import kotlinx.android.synthetic.main.activity_main.*
+
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -151,22 +147,48 @@ class MainActivity : AppCompatActivity() {
         // Create scene without a basemap.  Background for scene content provided by device camera.
         sceneView.setScene(ArcGISScene());
 
+        val graphicsOverlay = GraphicsOverlay()
+        graphicsOverlay.getSceneProperties().setSurfacePlacement(LayerSceneProperties.SurfacePlacement.RELATIVE)
+        sceneView.graphicsOverlays.add(graphicsOverlay)
+
         val opLayers = sceneView.getScene().getOperationalLayers();
-        val layer0 = FeatureLayer(ServiceFeatureTable(
-                        "https://services1.arcgis.com/6677msI40mnLuuLr/arcgis/rest/services/GeoXRay_WFL1/FeatureServer/0"));
-        layer0.sceneProperties.surfacePlacement = LayerSceneProperties.SurfacePlacement.RELATIVE
-        opLayers.add(layer0);
-        val layer1 = FeatureLayer(ServiceFeatureTable(
-                "https://services1.arcgis.com/6677msI40mnLuuLr/arcgis/rest/services/GeoXRay_WFL1/FeatureServer/1"));
-        layer1.sceneProperties.surfacePlacement = LayerSceneProperties.SurfacePlacement.RELATIVE
-        opLayers.add(layer1);
-        val layer2 = FeatureLayer(ServiceFeatureTable(
-                "https://services1.arcgis.com/6677msI40mnLuuLr/arcgis/rest/services/GeoXRay_WFL1/FeatureServer/2"));
-        layer2.sceneProperties.surfacePlacement = LayerSceneProperties.SurfacePlacement.RELATIVE
-        opLayers.add(layer2);
+
+        val sandstoneFeatureTable = ServiceFeatureTable(
+                        "https://services1.arcgis.com/6677msI40mnLuuLr/arcgis/rest/services/GeoXRay_WFL1/FeatureServer/0")
+        val sandstoneFeatureLayer = FeatureLayer(sandstoneFeatureTable)
+        sandstoneFeatureLayer.sceneProperties.surfacePlacement = LayerSceneProperties.SurfacePlacement.RELATIVE
+        opLayers.add(sandstoneFeatureLayer)
+
+        val mudstoneFeatureTable = ServiceFeatureTable(
+                "https://services1.arcgis.com/6677msI40mnLuuLr/arcgis/rest/services/GeoXRay_WFL1/FeatureServer/1")
+        val mudstoneFeatureLayer = FeatureLayer(mudstoneFeatureTable)
+        mudstoneFeatureLayer.sceneProperties.surfacePlacement = LayerSceneProperties.SurfacePlacement.RELATIVE
+        opLayers.add(mudstoneFeatureLayer)
+
+        val basaltFeatureTable = ServiceFeatureTable(
+                "https://services1.arcgis.com/6677msI40mnLuuLr/arcgis/rest/services/GeoXRay_WFL1/FeatureServer/2")
+        val basaltFeatureLayer = FeatureLayer(basaltFeatureTable)
+        basaltFeatureLayer.sceneProperties.surfacePlacement = LayerSceneProperties.SurfacePlacement.RELATIVE
+        opLayers.add(basaltFeatureLayer)
+
+        val boreholeFeatureTable = ServiceFeatureTable(
+                "https://services1.arcgis.com/6677msI40mnLuuLr/arcgis/rest/services/GeoXRay_WFL1/FeatureServer/3")
+        val boreholeFeatureLayer = FeatureLayer(boreholeFeatureTable)
+        boreholeFeatureLayer.sceneProperties.surfacePlacement = LayerSceneProperties.SurfacePlacement.RELATIVE
+        opLayers.add(boreholeFeatureLayer)
+
+        // set up class for drawing bore holes
+
+        val boreHoleRenderer = BoreHoleRenderer()
+        boreHoleRenderer.graphicsOverlay = graphicsOverlay
+        boreHoleRenderer.basaltFeatureTable = basaltFeatureTable
+        boreHoleRenderer.mudstoneFeatureTable = mudstoneFeatureTable
+        boreHoleRenderer.sandstoneFeatureTable = sandstoneFeatureTable
+        boreHoleRenderer.boreholeFeatureTable = boreholeFeatureTable
+        boreHoleRenderer.renderBoreholes()
 
         // Enable AR for scene view.
-        sceneView.setARModeEnabled(true);
+        sceneView.setARModeEnabled(true)
 
         // Create an instance of Camera
         var camera = Camera(55.952486, -3.163775, 100.0, 0.0, 0.0, 0.0);
