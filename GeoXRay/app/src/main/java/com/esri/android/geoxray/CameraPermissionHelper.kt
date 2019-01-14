@@ -27,7 +27,7 @@ import android.support.v4.content.ContextCompat
 
 /** Helper to ask camera permission.  */
 object CameraPermissionHelper {
-    private val CAMERA_PERMISSION_CODE = 0
+    public val CAMERA_PERMISSION_CODE = 0
     private val CAMERA_PERMISSION = Manifest.permission.CAMERA
 
     /** Check to see we have the necessary permissions for this app.  */
