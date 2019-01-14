@@ -11,6 +11,7 @@ import com.esri.arcgisruntime.mapping.ArcGISScene
 import com.esri.arcgisruntime.mapping.view.ARCoreMotionDataSource
 import com.esri.arcgisruntime.mapping.view.Camera
 import com.esri.arcgisruntime.mapping.view.FirstPersonCameraController
+import com.esri.arcgisruntime.mapping.view.LayerSceneProperties
 import com.google.ar.core.ArCoreApk
 import com.google.ar.core.Session
 import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException
@@ -45,6 +46,8 @@ class MainActivity : AppCompatActivity() {
                 CameraPermissionHelper.launchPermissionSettings(this)
             }
             finish()
+        } else {
+            setUpARScene()
         }
     }
 
@@ -87,21 +90,27 @@ class MainActivity : AppCompatActivity() {
         sceneView.setScene(ArcGISScene());
 
         val opLayers = sceneView.getScene().getOperationalLayers();
-        opLayers.add(FeatureLayer(ServiceFeatureTable(
-                "https://services1.arcgis.com/6677msI40mnLuuLr/arcgis/rest/services/GeoXRay_WFL1/FeatureServer/0")));
-        opLayers.add(FeatureLayer(ServiceFeatureTable(
-                "https://services1.arcgis.com/6677msI40mnLuuLr/arcgis/rest/services/GeoXRay_WFL1/FeatureServer/1")));
-        opLayers.add(FeatureLayer(ServiceFeatureTable(
-                "https://services1.arcgis.com/6677msI40mnLuuLr/arcgis/rest/services/GeoXRay_WFL1/FeatureServer/2")));
+        val layer0 = FeatureLayer(ServiceFeatureTable(
+                        "https://services1.arcgis.com/6677msI40mnLuuLr/arcgis/rest/services/GeoXRay_WFL1/FeatureServer/0"));
+        layer0.sceneProperties.surfacePlacement = LayerSceneProperties.SurfacePlacement.RELATIVE
+        opLayers.add(layer0);
+        val layer1 = FeatureLayer(ServiceFeatureTable(
+                "https://services1.arcgis.com/6677msI40mnLuuLr/arcgis/rest/services/GeoXRay_WFL1/FeatureServer/1"));
+        layer1.sceneProperties.surfacePlacement = LayerSceneProperties.SurfacePlacement.RELATIVE
+        opLayers.add(layer1);
+        val layer2 = FeatureLayer(ServiceFeatureTable(
+                "https://services1.arcgis.com/6677msI40mnLuuLr/arcgis/rest/services/GeoXRay_WFL1/FeatureServer/2"));
+        layer2.sceneProperties.surfacePlacement = LayerSceneProperties.SurfacePlacement.RELATIVE
+        opLayers.add(layer2);
 
         // Enable AR for scene view.
         sceneView.setARModeEnabled(true);
 
         // Create an instance of Camera
-        val cameraDynamicEarth = Camera(55.952486, -3.163775, 18.0, 0.0, 0.0, 0.0);
+        val cameraDynamicEarth = Camera(55.952486, -3.163775, 100.0, 0.0, 0.0, 0.0);
         val fpcController = FirstPersonCameraController();
         fpcController.setInitialPosition(cameraDynamicEarth);
-        fpcController.setTranslationFactor(500.0);
+//        fpcController.setTranslationFactor(500.0);
 
         val arMotionSource = ARCoreMotionDataSource(arSceneView,this);
         fpcController.setDeviceMotionDataSource(arMotionSource);
