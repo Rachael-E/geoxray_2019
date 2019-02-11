@@ -1,3 +1,5 @@
+![](GeoXRay.jpg)
+
 ## Inspiration
 Visualising geology beneath the surface when on site is a tough gig. Where does that rock go once it’s swallowed up by the earth? What if the site has no rocks exposed at surface: how are you meant to visualise what the geology is like without having to go back to the office and check your 3D geological model? How are you meant to explain easily to stakeholders visiting on site that there is a sandstone aquifer in the middle of your site, but that building to the west of it wouldn’t compromise ground water quality? Without bringing them back into the office to view your 3D geological model, it’s very difficult. 
 
